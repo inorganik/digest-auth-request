@@ -1,0 +1,43 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="robots" content="noindex,nofollow"> 
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>Digest auth tester</title>
+
+    <script type="text/javascript" src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js"></script>
+    <script type="text/javascript" src="digestAuthRequest.js"></script>
+
+    
+    </script>
+
+</head>
+<body>
+<h1>DigestAuthRequest.js test</h1>
+<p id="result">Requesting...</p>
+<p id="data"></p>
+</body>
+<script type="text/javascript">
+	window.onload = function() {
+
+		// digest auth request
+		var url = 'http://example.com/protected-resource';
+		// create digest request object
+		
+		var req = new digestAuthRequest('GET', url, 'username', 'password');
+		// make the request
+		req.request(function(data) {
+			console.log('Data retrieved successfully');
+			console.log(data);
+			document.getElementById('result').innerHTML = 'Data retrieved successfully';
+			document.getElementById('data').innerHTML = JSON.stringify(data);
+		},function(errorCode) {
+			console.log('no dice: '+errorCode);
+			document.getElementById('result').innerHTML = 'Error: '+errorCode;
+		});
+	}
+</script>
+
