@@ -1,4 +1,4 @@
-// digest auth request v0.2.0
+// digest auth request v0.3.0
 // by Jamie Perkins
 
 // dependent upon CryptoJS MD5 hashing:
@@ -14,6 +14,13 @@ function digestAuthRequest(method, url, username, password) {
 	this.response = null; // hashed response to server challenge
 	this.nc = 1; // nonce count - increments with each request used with the same nonce
 	this.cnonce = null; // client nonce
+
+	// requests
+	this.firstRequest;
+	this.request;
+
+	// settings
+	this.timeout = 6000;
 
 	// determine if a post
 	this.post = false;
@@ -36,8 +43,9 @@ function digestAuthRequest(method, url, username, password) {
 		}		
 	}
 	this.unauthenticatedRequest = function(data) {
-		var firstRequest = new XMLHttpRequest();
+		firstRequest = new XMLHttpRequest();
 		firstRequest.open(method, url, true);
+		firstRequest.timeout = self.timeout;
 		// if we are posting, add appropriate headers
 		if (self.post) {
 			firstRequest.setRequestHeader('Content-type', 'application/json');
@@ -85,18 +93,17 @@ function digestAuthRequest(method, url, username, password) {
 					// now we can make an authenticated request
 					self.authenticatedRequest();
 				}
-				else {
-					console.log('no digest auth headers - auth not required');
-				}
 			}
 			if (firstRequest.readyState == 4) {
-				self.successFn(firstRequest.responseText);
+				if (firstRequest.status == 200) {
+					self.successFn(JSON.parse(firstRequest.responseText));
+				}
 			}
 		}
 		// send
 		if (self.post) {
 			// in case digest auth not required
-			firstRequest.send(data);
+			firstRequest.send(self.data);
 		} else {
 			firstRequest.send();
 		}
@@ -105,8 +112,9 @@ function digestAuthRequest(method, url, username, password) {
 
 		self.response = self.formulateResponse();
 
-		var request = new XMLHttpRequest();
+		request = new XMLHttpRequest();
 		request.open(method, url, true);
+		request.timeout = self.timeout;
 		var digestAuthHeader =
 			'X-Digest username="'+username+'", '+
 			'realm="'+self.realm+'", '+
@@ -129,8 +137,7 @@ function digestAuthRequest(method, url, username, password) {
   				// increment nonce count
 				self.nc++;
 				// return JSON
-				var data = JSON.parse(request.responseText)
-				self.successFn(data);
+				self.successFn(JSON.parse(request.responseText));
 			}
 			// failure
 			else {
@@ -171,5 +178,13 @@ function digestAuthRequest(method, url, username, password) {
 			token += characters.substr(randNum, 1);
 		}
 		return token;
+	}
+	this.abort = function() {
+		if (self.firstRequest != null) {
+			if (self.firstRequest.readyState != 4) self.firstRequest.abort();
+		}
+		if (self.request != null) {
+			if (self.request.readyState != 4) self.request.abort();
+		}
 	}
 }
