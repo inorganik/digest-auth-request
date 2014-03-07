@@ -1,15 +1,8 @@
-// digest auth request v0.1.0
+// digest auth request v0.2.0
 // by Jamie Perkins
 
 // dependent upon CryptoJS MD5 hashing:
 // http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/md5.js
-// see example in index.html
-
-// Params:
-// method - GET, POST, etc (string)
-// request url (string)
-// username of registered user (string)
-// password of registered user (string)
 
 function digestAuthRequest(method, url, username, password) {
 
@@ -22,8 +15,11 @@ function digestAuthRequest(method, url, username, password) {
 	this.nc = 1; // nonce count - increments with each request used with the same nonce
 	this.cnonce = null; // client nonce
 
-	// start here
+	// determine if a post
+	this.post = false;
+	if (method.toLowerCase() == 'post') this.post = true;
 
+	// start here
 	// successFn - will be passed JSON data
 	// errorFn - will be passed error status code
 	// data - optional, for POSTS
@@ -34,14 +30,20 @@ function digestAuthRequest(method, url, username, password) {
 		self.errorFn = errorFn;
 
 		if (self.nonce == null) {
-			self.unauthenticatedRequest();
+			self.unauthenticatedRequest(self.data);
 		} else {
 			self.authenticatedRequest();
 		}		
 	}
-	this.unauthenticatedRequest = function() {
+	this.unauthenticatedRequest = function(data) {
 		var firstRequest = new XMLHttpRequest();
-		firstRequest.open('GET', url, true);
+		firstRequest.open(method, url, true);
+		// if we are posting, add appropriate headers
+		if (self.post) {
+			firstRequest.setRequestHeader('Content-type', 'application/json');
+			firstRequest.setRequestHeader('Content-length', data.length);
+			firstRequest.setRequestHeader('Connection', 'close');
+		}
 		firstRequest.onreadystatechange = function() {
 
 			// 2: received headers,  3: loading, 4: done
@@ -56,34 +58,48 @@ function digestAuthRequest(method, url, username, password) {
 						digestHeaders = responseHeaders[i];
 					}
 				}
-				// parse auth header and get digest auth keys
-				digestHeaders = digestHeaders.split(':')[1];
-				digestHeaders = digestHeaders.split(',');
-				for(var i = 0; i < digestHeaders.length; i++) {
-					var keyVal = digestHeaders[i].split('=');
-					var key = keyVal[0];
-					var val = keyVal[1].replace(/\"/g, '').trim();
-					// find realm
-					if (key.match(/realm/i) != null) {
-						self.realm = val;
+				if (digestHeaders != null) {
+					// parse auth header and get digest auth keys
+					digestHeaders = digestHeaders.split(':')[1];
+					digestHeaders = digestHeaders.split(',');
+					for(var i = 0; i < digestHeaders.length; i++) {
+						var keyVal = digestHeaders[i].split('=');
+						var key = keyVal[0];
+						var val = keyVal[1].replace(/\"/g, '').trim();
+						// find realm
+						if (key.match(/realm/i) != null) {
+							self.realm = val;
+						}
+						// find nonce
+						if (key.match(/nonce/i) != null) {
+							self.nonce = val;
+						}
+						// find QOP
+						if (key.match(/qop/i) != null) {
+							self.qop = val;
+						}
 					}
-					// find nonce
-					if (key.match(/nonce/i) != null) {
-						self.nonce = val;
-					}
-					// find QOP
-					if (key.match(/qop/i) != null) {
-						self.qop = val;
-					}
+					// client generated keys
+					self.cnonce = self.generateCnonce();
+					self.nc++;
+					// now we can make an authenticated request
+					self.authenticatedRequest();
 				}
-				// client generated keys
-				self.cnonce = self.generateCnonce();
-				self.nc++;
-				// now we can make an authenticated request
-				self.authenticatedRequest();
+				else {
+					console.log('no digest auth headers - auth not required');
+				}
+			}
+			if (firstRequest.readyState == 4) {
+				self.successFn(firstRequest.responseText);
 			}
 		}
-		firstRequest.send();
+		// send
+		if (self.post) {
+			// in case digest auth not required
+			firstRequest.send(data);
+		} else {
+			firstRequest.send();
+		}
 	}
 	this.authenticatedRequest = function() {
 
@@ -100,9 +116,13 @@ function digestAuthRequest(method, url, username, password) {
 			'qop='+self.qop+', '+
 			'nc='+('00000000' + self.nc).slice(-8)+', '+
 			'cnonce="'+self.cnonce+'"';
-		console.log(digestAuthHeader);
 		request.setRequestHeader('Authorization', digestAuthHeader);
-
+		// if we are posting, add appropriate headers
+		if (self.post) {
+			request.setRequestHeader('Content-type', 'application/json');
+			request.setRequestHeader('Content-length', data.length);
+			request.setRequestHeader('Connection', 'close');
+		}
 		request.onload = function() {
 			// success
   			if (request.status >= 200 && request.status < 400) {
@@ -123,8 +143,8 @@ function digestAuthRequest(method, url, username, password) {
 			self.nonce = null;
 			self.errorFn(request.status);
 		};
-
-		if (self.data != null) {
+		// send
+		if (self.post) {
 			request.send(self.data);
 		} else {
 			request.send();
