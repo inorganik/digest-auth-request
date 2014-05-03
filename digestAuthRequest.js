@@ -1,4 +1,4 @@
-// digest auth request v0.4.0
+// digest auth request v0.4.1
 // by Jamie Perkins
 
 // dependent upon CryptoJS MD5 hashing:
@@ -49,7 +49,7 @@ function digestAuthRequest(method, url, username, password) {
 		// if we are posting, add appropriate headers
 		if (self.post) {
 			self.firstRequest.setRequestHeader('Content-type', 'application/json');
-			self.firstRequest.setRequestHeader('Content-length', data.length);
+			self.firstRequest.setRequestHeader('Content-length', self.data.length);
 			self.firstRequest.setRequestHeader('Connection', 'close');
 		}
 		self.firstRequest.onreadystatechange = function() {
