@@ -12,6 +12,7 @@ function digestAuthRequest(method, url, username, password) {
 	this.realm = null; // server issued realm
 	this.qop = null; // "quality of protection" - '' or 'auth' or 'auth-int'
 	this.response = null; // hashed response to server challenge
+	this.opaque = null; // hashed response to server challenge
 	this.nc = 1; // nonce count - increments with each request used with the same nonce
 	this.cnonce = null; // client nonce
 
@@ -83,6 +84,10 @@ function digestAuthRequest(method, url, username, password) {
 						if (key.match(/nonce/i) != null) {
 							self.nonce = val;
 						}
+						// find opaque
+						if (key.match(/opaque/i) != null) {
+							self.opaque = val;
+						}
 						// find QOP
 						if (key.match(/qop/i) != null) {
 							self.qop = val;
@@ -130,6 +135,7 @@ function digestAuthRequest(method, url, username, password) {
 			'nonce="'+self.nonce+'", '+
 			'uri="'+url+'", '+
 			'response="'+self.response+'", '+
+			'opaque="'+self.opaque+'", '+
 			'qop='+self.qop+', '+
 			'nc='+('00000000' + self.nc).slice(-8)+', '+
 			'cnonce="'+self.cnonce+'"';
