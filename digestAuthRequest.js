@@ -8,6 +8,7 @@ function digestAuthRequest(method, url, username, password) {
 
 	var self = this;
 
+	this.scheme = null; // we just echo the scheme, to allow for 'Digest', 'X-Digest', 'JDigest' etc
 	this.nonce = null; // server issued nonce
 	this.realm = null; // server issued realm
 	this.qop = null; // "quality of protection" - '' or 'auth' or 'auth-int'
@@ -72,6 +73,7 @@ function digestAuthRequest(method, url, username, password) {
 					// parse auth header and get digest auth keys
 					digestHeaders = digestHeaders.split(':')[1];
 					digestHeaders = digestHeaders.split(',');
+					self.scheme = digestHeaders[0].split(/\s/)[1];
 					for(var i = 0; i < digestHeaders.length; i++) {
 						var keyVal = digestHeaders[i].split('=');
 						var key = keyVal[0];
@@ -129,8 +131,8 @@ function digestAuthRequest(method, url, username, password) {
 		self.request = new XMLHttpRequest();
 		self.request.open(method, url, true);
 		self.request.timeout = self.timeout;
-		var digestAuthHeader =
-			'X-Digest username="'+username+'", '+
+		var digestAuthHeader = self.scheme+' '+
+			'username="'+username+'", '+
 			'realm="'+self.realm+'", '+
 			'nonce="'+self.nonce+'", '+
 			'uri="'+url+'", '+
