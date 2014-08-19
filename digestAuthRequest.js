@@ -1,4 +1,4 @@
-// digest auth request v0.4.1
+// digest auth request v0.5.0
 // by Jamie Perkins
 
 // dependent upon CryptoJS MD5 hashing:
@@ -17,12 +17,9 @@ function digestAuthRequest(method, url, username, password) {
 	this.nc = 1; // nonce count - increments with each request used with the same nonce
 	this.cnonce = null; // client nonce
 
-	// requests
-	this.firstRequest;
-	this.request;
-
 	// settings
-	this.timeout = 6000;
+	this.timeout = 6000; // timeout
+	this.loggingOn = true; // toggle console logging
 
 	// determine if a post, so that request will send data 
 	this.post = false;
@@ -39,18 +36,19 @@ function digestAuthRequest(method, url, username, password) {
 		self.errorFn = errorFn;
 
 		if (self.nonce == null) {
-			self.unauthenticatedRequest(self.data);
+			self.makeUnauthenticatedRequest(self.data);
 		} else {
-			self.authenticatedRequest();
+			self.makeAuthenticatedRequest();
 		}		
 	}
-	this.unauthenticatedRequest = function(data) {		
+	this.makeUnauthenticatedRequest = function(data) {		
 		self.firstRequest = new XMLHttpRequest();
 		self.firstRequest.open(method, url, true);
 		self.firstRequest.timeout = self.timeout;
 		// if we are posting, add appropriate headers
 		if (self.post)
 			self.firstRequest.setRequestHeader('Content-type', 'application/json');
+
 		self.firstRequest.onreadystatechange = function() {
 
 			// 2: received headers,  3: loading, 4: done
@@ -97,14 +95,20 @@ function digestAuthRequest(method, url, username, password) {
 					self.nc++;
 					// now we can make an authenticated request
 					
-					self.authenticatedRequest();
+					self.makeAuthenticatedRequest();
 				}
 			}
 			if (self.firstRequest.readyState == 4) {
 				if (self.firstRequest.status == 200) {
+					if (self.loggingOn) console.log('[digestAuthRequest] Authentication not required for '+url);
 					if (self.firstRequest.responseText !== 'undefined') {
 						if (self.firstRequest.responseText.length > 0) {
-							self.successFn(JSON.parse(self.firstRequest.responseText));
+							// If JSON, parse and return object
+							if (self.isJson(self.firstRequest.responseText)) {
+								self.successFn(JSON.parse(self.firstRequest.responseText));
+							} else {
+								self.successFn(self.firstRequest.responseText);
+							}
 						}
 					} else {
 						self.successFn();
@@ -119,15 +123,24 @@ function digestAuthRequest(method, url, username, password) {
 		} else {
 			self.firstRequest.send();
 		}
-		console.log('[digestAuthRequest] Unauthenticated request to '+url);
+		if (self.loggingOn) console.log('[digestAuthRequest] Unauthenticated request to '+url);
+
+		// handle error
+		self.firstRequest.onerror = function() {
+			if (self.firstRequest.status !== 401) {
+				if (self.loggingOn) console.log('[digestAuthRequest] Error ('+self.authenticatedRequest.status+') on unauthenticated request to '+url);
+				self.errorFn(self.firstRequest.status);
+			}
+		}
+
 	}
-	this.authenticatedRequest = function() {
+	this.makeAuthenticatedRequest= function() {
 
 		self.response = self.formulateResponse();
 
-		self.request = new XMLHttpRequest();
-		self.request.open(method, url, true);
-		self.request.timeout = self.timeout;
+		self.authenticatedRequest = new XMLHttpRequest();
+		self.authenticatedRequest.open(method, url, true);
+		self.authenticatedRequest.timeout = self.timeout;
 		var digestAuthHeader = self.scheme+' '+
 			'username="'+username+'", '+
 			'realm="'+self.realm+'", '+
@@ -138,20 +151,25 @@ function digestAuthRequest(method, url, username, password) {
 			'qop='+self.qop+', '+
 			'nc='+('00000000' + self.nc).slice(-8)+', '+
 			'cnonce="'+self.cnonce+'"';
-		self.request.setRequestHeader('Authorization', digestAuthHeader);
+		self.authenticatedRequest.setRequestHeader('Authorization', digestAuthHeader);
 		// if we are posting, add appropriate headers
 		if (self.post)
-			self.request.setRequestHeader('Content-type', 'application/json');
-		self.request.onload = function() {
-			
+			self.authenticatedRequest.setRequestHeader('Content-type', 'application/json');
+	
+		self.authenticatedRequest.onload = function() {		
 			// success
-  			if (self.request.status >= 200 && self.request.status < 400) {
+  			if (self.authenticatedRequest.status >= 200 && self.authenticatedRequest.status < 400) {
   				// increment nonce count
 				self.nc++;
-				// return JSON
-				if (self.request.responseText !== 'undefined') {					
-					if (self.request.responseText.length > 0) {
-						self.successFn(JSON.parse(self.request.responseText));
+				// return data
+				if (self.authenticatedRequest.responseText !== 'undefined') {					
+					if (self.authenticatedRequest.responseText.length > 0) {
+						// If JSON, parse and return object
+						if (self.isJson(self.authenticatedRequest.responseText)) {
+							self.successFn(JSON.parse(self.authenticatedRequest.responseText));
+						} else {
+							self.successFn(self.authenticatedRequest.responseText);
+						}
 					}
 				} else {
 					self.successFn();
@@ -160,21 +178,22 @@ function digestAuthRequest(method, url, username, password) {
 			// failure
 			else {
 				self.nonce = null;
-				self.errorFn(self.request.status);
+				self.errorFn(self.authenticatedRequest.status);
 			}
 		}
-		self.request.onerror = function() { 
-			console.log('request error');
+		// handle errors
+		self.authenticatedRequest.onerror = function() { 
+			if (self.loggingOn) console.log('[digestAuthRequest] Error ('+self.authenticatedRequest.status+') on authenticated request to '+url);
 			self.nonce = null;
-			self.errorFn(self.request.status);
+			self.errorFn(self.authenticatedRequest.status);
 		};
 		// send
 		if (self.post) {
-			self.request.send(self.data);
+			self.authenticatedRequest.send(self.data);
 		} else {
-			self.request.send();
+			self.authenticatedRequest.send();
 		}
-		console.log('[digestAuthRequest] Authenticated request to '+url);
+		if (self.loggingOn) console.log('[digestAuthRequest] Authenticated request to '+url);
 	}
 	// hash response based on server challenge
 	this.formulateResponse = function() {
@@ -199,11 +218,20 @@ function digestAuthRequest(method, url, username, password) {
 		return token;
 	}
 	this.abort = function() {
+		if (self.loggingOn) console.log('[digestAuthRequest] Aborted request to '+url);
 		if (self.firstRequest != null) {
 			if (self.firstRequest.readyState != 4) self.firstRequest.abort();
 		}
-		if (self.request != null) {
-			if (self.request.readyState != 4) self.request.abort();
+		if (self.authenticatedRequest != null) {
+			if (self.authenticatedRequest.readyState != 4) self.authenticatedRequest.abort();
 		}
+	}
+	this.isJson = function(str) {
+	    try {
+	        JSON.parse(str);
+	    } catch (e) {
+	        return false;
+	    }
+	    return true;
 	}
 }
