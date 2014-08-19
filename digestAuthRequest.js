@@ -140,11 +140,8 @@ function digestAuthRequest(method, url, username, password) {
 			'cnonce="'+self.cnonce+'"';
 		self.request.setRequestHeader('Authorization', digestAuthHeader);
 		// if we are posting, add appropriate headers
-		if (self.post) {
+		if (self.post)
 			self.request.setRequestHeader('Content-type', 'application/json');
-			self.request.setRequestHeader('Content-length', self.data.length);
-			self.request.setRequestHeader('Connection', 'close');
-		}
 		self.request.onload = function() {
 			
 			// success
