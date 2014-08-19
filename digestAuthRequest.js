@@ -49,11 +49,8 @@ function digestAuthRequest(method, url, username, password) {
 		self.firstRequest.open(method, url, true);
 		self.firstRequest.timeout = self.timeout;
 		// if we are posting, add appropriate headers
-		if (self.post) {
+		if (self.post)
 			self.firstRequest.setRequestHeader('Content-type', 'application/json');
-			self.firstRequest.setRequestHeader('Content-length', self.data.length);
-			self.firstRequest.setRequestHeader('Connection', 'close');
-		}
 		self.firstRequest.onreadystatechange = function() {
 
 			// 2: received headers,  3: loading, 4: done
@@ -143,11 +140,8 @@ function digestAuthRequest(method, url, username, password) {
 			'cnonce="'+self.cnonce+'"';
 		self.request.setRequestHeader('Authorization', digestAuthHeader);
 		// if we are posting, add appropriate headers
-		if (self.post) {
+		if (self.post)
 			self.request.setRequestHeader('Content-type', 'application/json');
-			self.request.setRequestHeader('Content-length', self.data.length);
-			self.request.setRequestHeader('Connection', 'close');
-		}
 		self.request.onload = function() {
 			
 			// success
