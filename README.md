@@ -14,10 +14,10 @@ GET request:
 var url = 'http://example.com/protected-resource';
 		
 // create digest request object
-var req = new digestAuthRequest('GET', url, 'username', 'password');
+var getRequest = new digestAuthRequest('GET', url, 'username', 'password');
 		
 // make the request
-req.request(function(data) { 
+getRequest.request(function(data) { 
   // success callback
   // do something with the data
 },function(errorCode) { 
@@ -51,4 +51,6 @@ postReq.request(function(data) {
   // tell user request failed
 }, postData);
 ```
+### Toggle console logging
 
+Out of the box digestAuthRequest.js has logging turned on so you can debug. Set `loggingOn` to false to disable it.
