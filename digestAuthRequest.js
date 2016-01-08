@@ -78,6 +78,7 @@ function digestAuthRequest(method, url, username, password) {
 						var equalIndex = digestHeaders[i].indexOf('='),
 							key = digestHeaders[i].substring(0, equalIndex),
 							val = digestHeaders[i].substring(equalIndex + 1);
+						val = val.replace(/['"]+/g, '');
 						// find realm
 						if (key.match(/realm/i) != null) {
 							self.realm = val;
@@ -252,5 +253,5 @@ function digestAuthRequest(method, url, username, password) {
 			console.log('[digestAuthRequest] '+str);
 		}
 	}
-	this.version = function() { return '0.6.0' }
+	this.version = function() { return '0.6.1' }
 }

@@ -1,0 +1,25 @@
+{
+  "name": "digest-auth-request",
+  "version": "0.6.1",
+  "description": "Make digest-auth requests with vanilla javascript",
+  "main": "digestAuthRequest.js",
+  "dependencies": {
+    "md5": "2.0.0"
+  },
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inorganik/digest-auth-request.git"
+  },
+  "keywords": [
+    "digest",
+    "auth",
+    "javascript"
+  ],
+  "author": "@inorganik",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/inorganik/digest-auth-request/issues"
+  },
+  "homepage": "https://github.com/inorganik/digest-auth-request#readme"
+}
