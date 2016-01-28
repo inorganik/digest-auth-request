@@ -140,7 +140,7 @@ function digestAuthRequest(method, url, username, password) {
 		// handle error
 		self.firstRequest.onerror = function() {
 			if (self.firstRequest.status !== 401) {
-				self.log('Error ('+self.authenticatedRequest.status+') on unauthenticated request to '+url);
+				self.log('Error ('+self.firstRequest.status+') on unauthenticated request to '+url);
 				self.errorFn(self.firstRequest.status);
 			}
 		}
