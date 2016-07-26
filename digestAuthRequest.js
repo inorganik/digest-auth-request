@@ -183,14 +183,12 @@
                                         // increment nonce count
                                         self.nc++;
                                         // return data
-                                        if (self.authenticatedRequest.responseText !== 'undefined') {
-                                                if (self.authenticatedRequest.responseText.length > 0) {
-                                                        // If JSON, parse and return object
-                                                        if (self.isJson(self.authenticatedRequest.responseText)) {
-                                                                self.successFn(JSON.parse(self.authenticatedRequest.responseText));
-                                                        } else {
-                                                                self.successFn(self.authenticatedRequest.responseText);
-                                                        }
+                                        if (self.authenticatedRequest.responseText !== 'undefined' && self.authenticatedRequest.responseText.length > 0 ) {
+                                                // If JSON, parse and return object
+                                                if (self.isJson(self.authenticatedRequest.responseText)) {
+                                                        self.successFn(JSON.parse(self.authenticatedRequest.responseText));
+                                                } else {
+                                                        self.successFn(self.authenticatedRequest.responseText);
                                                 }
                                         } else {
                                                 self.successFn();
