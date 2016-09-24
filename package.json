@@ -1,28 +1,90 @@
 {
-  "name": "digest-auth-request",
-  "version": "0.6.1",
-  "description": "Make digest-auth requests with vanilla javascript",
-  "main": "digestAuthRequest.js",
+  "_args": [
+    [
+      {
+        "raw": "digest-auth-request",
+        "scope": null,
+        "escapedName": "digest-auth-request",
+        "name": "digest-auth-request",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "/Users/Benni/ReactNativeProjects/frischeApp"
+    ]
+  ],
+  "_from": "digest-auth-request@latest",
+  "_id": "digest-auth-request@0.6.2",
+  "_inCache": true,
+  "_location": "/digest-auth-request",
+  "_nodeVersion": "0.10.22",
+  "_npmOperationalInternal": {
+    "host": "packages-16-east.internal.npmjs.com",
+    "tmp": "tmp/digest-auth-request-0.6.2.tgz_1469570529441_0.8508549053221941"
+  },
+  "_npmUser": {
+    "name": "inorganik",
+    "email": "jamie.perkins@gmail.com"
+  },
+  "_npmVersion": "3.5.2",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "digest-auth-request",
+    "scope": null,
+    "escapedName": "digest-auth-request",
+    "name": "digest-auth-request",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/digest-auth-request/-/digest-auth-request-0.6.2.tgz",
+  "_shasum": "a2a3dfc58b6b9bcfc038af609bb0669d80fc6eb1",
+  "_shrinkwrap": null,
+  "_spec": "digest-auth-request",
+  "_where": "/Users/Benni/ReactNativeProjects/frischeApp",
+  "author": {
+    "name": "@inorganik"
+  },
+  "bugs": {
+    "url": "https://github.com/inorganik/digest-auth-request/issues"
+  },
   "dependencies": {
-    "crypto-js": "^3.1.6"
+    "crypto-js": "^3.1.6",
+    "md5": "2.0.0"
   },
-  "scripts": {},
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/inorganik/digest-auth-request.git"
+  "description": "Make digest-auth requests with vanilla javascript",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "a2a3dfc58b6b9bcfc038af609bb0669d80fc6eb1",
+    "tarball": "https://registry.npmjs.org/digest-auth-request/-/digest-auth-request-0.6.2.tgz"
   },
+  "gitHead": "b0c74147336e608a6bd71492b1a0e3f76a1f63ca",
+  "homepage": "https://github.com/inorganik/digest-auth-request#readme",
   "keywords": [
     "digest",
     "auth",
     "javascript"
   ],
-  "author": "@inorganik",
   "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/inorganik/digest-auth-request/issues"
+  "main": "digestAuthRequest.js",
+  "maintainers": [
+    {
+      "name": "inorganik",
+      "email": "jamie.perkins@gmail.com"
+    }
+  ],
+  "name": "digest-auth-request",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inorganik/digest-auth-request.git"
   },
-  "homepage": "https://github.com/inorganik/digest-auth-request#readme",
-  "devDependencies": {
-    "md5": "^2.0.0"
-  }
+  "scripts": {},
+  "version": "0.6.2"
 }
