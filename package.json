@@ -1,6 +1,6 @@
 {
   "name": "digest-auth-request",
-  "version": "0.6.1",
+  "version": "0.7.0",
   "description": "Make digest-auth requests with vanilla javascript",
   "main": "digestAuthRequest.js",
   "dependencies": {
