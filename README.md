@@ -57,4 +57,4 @@ Out of the box digestAuthRequest.js has logging turned on so you can debug. Set 
 ### Contributing
 
 1. Make edits to `digestAuthRequest.js` in the root 
-1. In terminal, run `gulp`
+1. In terminal, run `yarn build` or simply `gulp`.

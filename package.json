@@ -2,7 +2,7 @@
   "name": "digest-auth-request",
   "version": "0.8.0",
   "description": "Make digest-auth requests with vanilla javascript",
-  "main": "digestAuthRequest.js",
+  "main": "./dist/digestAuthRequest.min.js",
   "dependencies": {
     "crypto-js": "^3.1.6"
   },
