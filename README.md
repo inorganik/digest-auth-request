@@ -36,14 +36,13 @@ var postData = {
    city: 'Denver',
    state: 'Colorado'
 }
-postData = JSON.stringify(postData);
 
 // create new digest request object
-// because method is different
+// because method (POST vs GET) is different
 // otherwise we could re-use the first one
 var postReq = new digestAuthRequest('POST', url, 'username', 'password');
 
-postReq.request(function(data) { 
+postReq.request(function(postData) { 
   // success callback
   // data probably a success message
 },function(errorCode) { 
@@ -54,3 +53,8 @@ postReq.request(function(data) {
 ### Toggle console logging
 
 Out of the box digestAuthRequest.js has logging turned on so you can debug. Set `loggingOn` to false to disable it.
+
+### Contributing
+
+1. Make edits to `digestAuthRequest.js` in the root 
+1. In terminal, run `gulp`
