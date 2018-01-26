@@ -42,7 +42,7 @@ var postData = {
 // otherwise we could re-use the first one
 var postReq = new digestAuthRequest('POST', url, 'username', 'password');
 
-postReq.request(function(postData) { 
+postReq.request(function(data) { 
   // success callback
   // data probably a success message
 },function(errorCode) { 
