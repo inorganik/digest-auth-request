@@ -74,7 +74,7 @@ var digestAuthRequest = function (method, url, username, password) {
 
 				if (digestHeaders != null) {
 					// parse auth header and get digest auth keys
-					digestHeaders = digestHeaders.slice(digestHeaders.indexOf(':') + 1, -1);
+					digestHeaders = digestHeaders.slice(digestHeaders.indexOf(':') + 1).replace(/\r/g, '');
 					digestHeaders = digestHeaders.split(',');
 					self.scheme = digestHeaders[0].split(/\s/)[1];
 					for (var i = 0; i < digestHeaders.length; i++) {
