@@ -7,8 +7,12 @@
 var digestAuthRequest = function (method, url, username, password) {
 	var self = this;
 
-	if (typeof CryptoJS === 'undefined' && typeof require === 'function') {
+	if ((typeof window.CryptoJS === 'undefined' && typeof CryptoJS === 'undefined') && typeof require === 'function') {
 		var CryptoJS = require('crypto-js');
+	}
+	// check exist and :=
+	if(typeof window.CryptoJS !== 'undefined'){
+		var CryptoJS = window.CryptoJS;
 	}
 
 	this.scheme = null; // we just echo the scheme, to allow for 'Digest', 'X-Digest', 'JDigest' etc
