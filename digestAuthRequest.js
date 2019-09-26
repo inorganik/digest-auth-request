@@ -113,7 +113,7 @@ var digestAuthRequest = function (method, url, username, password) {
 				}
 			}
 			if (self.firstRequest.readyState === 4) {
-				if (self.firstRequest.status === 200) {
+				if (self.firstRequest.status >= 200 && self.firstRequest.status < 400) {
 					self.log('Authentication not required for '+url);
 					if (self.firstRequest.responseText !== 'undefined') {
 						if (self.firstRequest.responseText.length > 0) {
