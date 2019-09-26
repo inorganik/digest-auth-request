@@ -1,5 +1,5 @@
 {
-  "name": "digest-auth-request",
+  "name": "@shopmacher/digest-auth-request",
   "version": "0.8.0",
   "description": "Make digest-auth requests with vanilla javascript",
   "main": "./dist/digestAuthRequest.min.js",
