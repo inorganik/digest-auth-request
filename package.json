@@ -1,6 +1,6 @@
 {
   "name": "@shopmacher/digest-auth-request",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "description": "Make digest-auth requests with vanilla javascript",
   "main": "./dist/digestAuthRequest.min.js",
   "dependencies": {
@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/inorganik/digest-auth-request.git"
+    "url": "git+https://github.com/sironheart/digest-auth-request.git"
   },
   "keywords": [
     "digest",
@@ -21,9 +21,9 @@
   "author": "@inorganik",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/inorganik/digest-auth-request/issues"
+    "url": "https://github.com/sironheart/digest-auth-request/issues"
   },
-  "homepage": "https://github.com/inorganik/digest-auth-request#readme",
+  "homepage": "https://github.com/sironheart/digest-auth-request#readme",
   "devDependencies": {
     "del": "^3.0.0",
     "gulp": "^3.9.1",
