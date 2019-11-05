@@ -69,6 +69,7 @@ var digestAuthRequest = function (method, url, username, password) {
 				for(var i = 0; i < responseHeaders.length; i++) {
 					if (responseHeaders[i].match(/^www-authenticate:/i) != null) {
 						digestHeaders = responseHeaders[i];
+						break;
 					}
 				}
 
