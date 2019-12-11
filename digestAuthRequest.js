@@ -146,6 +146,10 @@ var digestAuthRequest = function (method, url, username, password) {
 				self.errorFn(self.firstRequest.status);
 			}
 		}
+		self.firstRequest.ontimeout = function() {
+			self.log('Timeout on authenticated request to '+url);
+			self.errorFn(self.firstRequest.status);
+		}
 	}
 	this.makeAuthenticatedRequest= function() {
 
@@ -199,6 +203,11 @@ var digestAuthRequest = function (method, url, username, password) {
 			self.nonce = null;
 			self.errorFn(self.authenticatedRequest.status);
 		};
+		self.authenticatedRequest.ontimeout = function() {
+			self.log('Timeout on authenticated request to '+url);
+			self.nonce = null;
+			self.errorFn(self.authenticatedRequest.status);
+		}
 		// send
 		if (self.post) {
 			self.authenticatedRequest.send(self.data);
